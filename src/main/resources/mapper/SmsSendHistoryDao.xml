@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bsoft.xnsmservice.dao.SmsSendHistoryDao">
+
+    <resultMap type="com.bsoft.xnsmservice.entity.SmsSendHistory" id="SmsSendHistoryMap">
+        <result property="ecname" column="ecName" jdbcType="VARCHAR"/>
+        <result property="apid" column="apId" jdbcType="VARCHAR"/>
+        <result property="mobiles" column="mobiles" jdbcType="VARCHAR"/>
+        <result property="content" column="content" jdbcType="VARCHAR"/>
+        <result property="params" column="params" jdbcType="VARCHAR"/>
+        <result property="templateid" column="templateId" jdbcType="VARCHAR"/>
+        <result property="sign" column="sign" jdbcType="VARCHAR"/>
+        <result property="addserial" column="addSerial" jdbcType="VARCHAR"/>
+        <result property="rspcod" column="rspcod" jdbcType="VARCHAR"/>
+        <result property="ipv4" column="ipv4" jdbcType="VARCHAR"/>
+        <result property="macid" column="macId" jdbcType="VARCHAR"/>
+        <result property="sendtime" column="sendTime" jdbcType="VARCHAR"/>
+        <result property="sId" column="s_id" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="SmsSendHistoryMap">
+        select
+          ecName, apId, mobiles, content, params, templateId, sign, addSerial, rspcod, ipv4, macId, sendTime, s_id
+        from wx_db.sms_send_history
+        where s_id = #{sId}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="SmsSendHistoryMap">
+        select
+          ecName, apId, mobiles, content, params, templateId, sign, addSerial, rspcod, ipv4, macId, sendTime, s_id
+        from wx_db.sms_send_history
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="SmsSendHistoryMap">
+        select
+        ecName, apId, mobiles, content, params, templateId, sign, addSerial, rspcod, ipv4, macId, sendTime, s_id
+        from wx_db.sms_send_history
+        <where>
+            <if test="ecname != null and ecname != ''">
+                and ecName = #{ecname}
+            </if>
+            <if test="apid != null and apid != ''">
+                and apId = #{apid}
+            </if>
+            <if test="mobiles != null and mobiles != ''">
+                and mobiles = #{mobiles}
+            </if>
+            <if test="content != null and content != ''">
+                and content = #{content}
+            </if>
+            <if test="params != null and params != ''">
+                and params = #{params}
+            </if>
+            <if test="templateid != null and templateid != ''">
+                and templateId = #{templateid}
+            </if>
+            <if test="sign != null and sign != ''">
+                and sign = #{sign}
+            </if>
+            <if test="addserial != null and addserial != ''">
+                and addSerial = #{addserial}
+            </if>
+            <if test="rspcod != null and rspcod != ''">
+                and rspcod = #{rspcod}
+            </if>
+            <if test="ipv4 != null and ipv4 != ''">
+                and ipv4 = #{ipv4}
+            </if>
+            <if test="macid != null and macid != ''">
+                and macId = #{macid}
+            </if>
+            <if test="sendtime != null and sendtime != ''">
+                and sendTime = #{sendtime}
+            </if>
+            <if test="sId != null">
+                and s_id = #{sId}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="sId" useGeneratedKeys="true">
+        insert into wx_db.sms_send_history(ecName, apId, mobiles, content, params, templateId, sign, addSerial, rspcod, ipv4, macId, sendTime)
+        values (#{ecname}, #{apid}, #{mobiles}, #{content}, #{params}, #{templateid}, #{sign}, #{addserial}, #{rspcod}, #{ipv4}, #{macid}, #{sendtime})
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update wx_db.sms_send_history
+        <set>
+            <if test="ecname != null and ecname != ''">
+                ecName = #{ecname},
+            </if>
+            <if test="apid != null and apid != ''">
+                apId = #{apid},
+            </if>
+            <if test="mobiles != null and mobiles != ''">
+                mobiles = #{mobiles},
+            </if>
+            <if test="content != null and content != ''">
+                content = #{content},
+            </if>
+            <if test="params != null and params != ''">
+                params = #{params},
+            </if>
+            <if test="templateid != null and templateid != ''">
+                templateId = #{templateid},
+            </if>
+            <if test="sign != null and sign != ''">
+                sign = #{sign},
+            </if>
+            <if test="addserial != null and addserial != ''">
+                addSerial = #{addserial},
+            </if>
+            <if test="rspcod != null and rspcod != ''">
+                rspcod = #{rspcod},
+            </if>
+            <if test="ipv4 != null and ipv4 != ''">
+                ipv4 = #{ipv4},
+            </if>
+            <if test="macid != null and macid != ''">
+                macId = #{macid},
+            </if>
+            <if test="sendtime != null and sendtime != ''">
+                sendTime = #{sendtime},
+            </if>
+        </set>
+        where s_id = #{sId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from wx_db.sms_send_history where s_id = #{sId}
+    </delete>
+
+</mapper>
