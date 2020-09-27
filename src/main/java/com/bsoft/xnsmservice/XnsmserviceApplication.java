@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class XnsmserviceApplication {
 
 	public static void main(String[] args) {
+//		test git.
 		SpringApplication.run(XnsmserviceApplication.class, args);
 	}
 
