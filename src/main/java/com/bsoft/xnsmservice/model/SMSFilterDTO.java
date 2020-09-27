@@ -2,6 +2,9 @@ package com.bsoft.xnsmservice.model;
 
 import com.bsoft.xnsmservice.config.SMServiceType;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
+
 /**
  * @ClassName SMSFilterDTO
  * @Description 入参转换类
@@ -15,11 +18,13 @@ public class SMSFilterDTO {
 	/**
 	 * 内容或者电话和内容
 	 */
+	@NotEmpty(message = "发送内容不能为空")
 	private String content;
 	private String ipv4;
 	/**
 	 * 服务类型代码
 	 */
+	@Size(max = 1000, min = 0, message = "类型不存在")
 	private int sType;//传入的发送类型
 	/**
 	 * 通过sType获得的短信服务类型

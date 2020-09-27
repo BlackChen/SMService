@@ -13,8 +13,10 @@ import com.bsoft.xnsmservice.util.DBConnectionUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.sql.Connection;
@@ -38,11 +40,8 @@ public class SmsServiceController {
 	@ApiOperation(value = "sendSms", notes = "发送普通短信", response = CMSMSResult.class)
 	@PostMapping("/sendSms")
 	@ResponseBody
-	public String sendSms(SMSFilterDTO smsFilter){
+	public String sendSms(@Validated @RequestBody SMSFilterDTO smsFilter){
 		ResultDTO resultDTO = new ResultDTO();
-//1.确认发送类型
-		if (smsFilter.getsType()>200 || smsFilter.getsType()<100)
-			return resultDTO.returnErrorSring("404", "类型错误");
 
 		try {
 			SMServiceType type = smsFilter.getServiceType();
@@ -64,14 +63,8 @@ public class SmsServiceController {
 				}break;
 
 			}
-		} catch (NullPointerException e){
-			resultDTO.setCode("502");
-			resultDTO.setMessage("空指针:"+e.getMessage());
-		} catch (SQLException e) {
-			resultDTO.setCode("503");
-			resultDTO.setMessage("数据库错误:"+e.getMessage());
 		} catch (Exception e){
-			resultDTO.setCode("504");
+			resultDTO.setCode("500");
 			resultDTO.setMessage(e.getMessage());
 		}
 
@@ -186,9 +179,8 @@ public class SmsServiceController {
 			e.printStackTrace();
 //		} catch (ClassNotFoundException e) {
 //			e.printStackTrace();
-		}finally {
-			return resultDTO.returntoString();
 		}
+		return resultDTO.returntoString();
 	}
 
 	// 测试 main函数
