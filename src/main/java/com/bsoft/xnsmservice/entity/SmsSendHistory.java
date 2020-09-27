@@ -87,6 +87,25 @@ public class SmsSendHistory implements Serializable {
 	public SmsSendHistory() throws SocketException {
 	}
 
+	public String toSQLString (){
+		StringBuilder str = new StringBuilder();
+		str.append("'"+ecname+"','");
+		str.append(apid+"','");
+		str.append(mobiles+"','");
+		str.append(content+"','");
+		str.append(params+"','");
+		str.append(templateid+"','");
+		str.append(sign+"','");
+		str.append(addserial+"','");
+		str.append(rspcod+"','");
+		str.append(this.getIpv4()+"','");
+		str.append(macid+"','");
+		str.append(sendtime+"','");
+		str.append(serid+"'");
+		return str.toString();
+
+	}
+
 	public void transCM (CMSMSFilter rec, String rspcod, SMSFilterDTO dto){
 		this.sign = rec.getSign();
 		this.templateid = getTemplateid();

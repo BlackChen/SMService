@@ -16,10 +16,31 @@ public class DBConnectionUtil {
 	private static Connection conn;//创建连接器，用完即关
 
 	/**
-	 * 获取数据库连接
-	 * @return
+	 * 连接池工具类，返回唯一的一个数据库连接池对象,单例模式
 	 */
-	public static void getDBConnection(SMServiceType type) throws SQLException {
+	private static DBConnectionPool poolInstance = null;
+	private DBConnectionUtil() {//私有静态方法
+	}
+
+	public static DBConnectionPool GetPoolInstance() {
+		if(poolInstance == null) {
+			poolInstance = new DBConnectionPool( DBInfoConfig.getDriver(), DBInfoConfig.getUrl(),//+"?useUnicode=true&characterEncoding=utf-8",
+					 DBInfoConfig.getUsername(), DBInfoConfig.getPassword()
+			);
+
+			try {
+				poolInstance.createPool();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return poolInstance;
+	}
+	/**
+	 * 获取数据库连接
+	 */
+	public static void getDBConnection(SMServiceType type) throws ClassNotFoundException,SQLException  {
 		DBInfoConfig.ConfigDBInfo(type);
 		try {//相当于 new com.mysql.jdbc.Driver()，在环境中创建此对象，如果没有该类，则抛出ClassNotFoundException。
 			//如果catch的类别中中没有设置ClassNotFoundException，则会报错
@@ -32,7 +53,7 @@ public class DBConnectionUtil {
 				ResultSet tabs = conn.getMetaData().getTables(null, null, tableName, null);
 
 				if (!tabs.next()) {//表不存在
-					Statement stmt = (Statement) conn.createStatement();
+					Statement stmt = conn.createStatement();
 
 					String sql = "create table " + tableName + "(" +
 							"    ecName     tinytext not null comment '企业名称'," +
@@ -78,10 +99,39 @@ public class DBConnectionUtil {
 	}
 
 	/**
+	 * 增加发送记录 通过连接池
+	 * @param his
+	 */
+	public static void addSmsRecordPool(SmsSendHistory rec) throws ClassNotFoundException,SocketException,SQLException{
+		try {
+			DBConnectionPool connPool = DBConnectionUtil.GetPoolInstance();//单例模式创建连接池对象
+			// SQL语句
+			String sql = "insert into " +DBInfoConfig.getTablename()+
+					"(ecName,apId,mobiles,content,params,templateId,sign,addSerial,rspcod,ipv4,macId,sendTime,serid) " +
+					"values(" +
+					rec.toSQLString() +
+					")";
+
+			Connection conn = connPool.getConnection(); // 从连接库中获取一个可用的连接
+			Statement stmt = conn.createStatement();
+
+			stmt.executeUpdate(sql);
+
+			stmt.close();
+			connPool.returnConnection(conn);// 连接使用完后释放连接到连接池
+
+			// connPool.refreshConnections();//刷新数据库连接池中所有连接，即不管连接是否正在运行，都把所有连接都释放并放回到连接池。注意：这个耗时比较大。
+			connPool.closeConnectionPool();// 关闭数据库连接池。注意：这个耗时比较大。
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
 	 * 增加发送记录
 	 * @param rec
 	 */
-	public static void addSmsRecord(SmsSendHistory rec) throws SocketException,SQLException {
+	public static void addSmsRecord(SmsSendHistory rec) throws ClassNotFoundException,SocketException,SQLException {
 		// 连接数据库
 		getDBConnection(rec.getServiceType());
 
@@ -92,7 +142,6 @@ public class DBConnectionUtil {
 				"(ecName,apId,mobiles,content,params,templateId,sign,addSerial,rspcod,ipv4,macId,sendTime,serid) " +
 				"values(?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		// 绑定
-
 		PreparedStatement pst = conn.prepareStatement(sql);
 		// 通过对象往数据库中add数据
 		// 几个问号几句 (从1开始)

@@ -26,10 +26,8 @@ public class CMSMService {
 	 * @param smsFilter
 	 * @return
 	 */
-	public static String sendNormalMsg(SMSFilterDTO smsFilter) throws SQLException, SocketException {
+	public static String sendNormalMsg(SMSFilterDTO smsFilter) throws SQLException, SocketException, ClassNotFoundException {
 		CMSMSFilter filter = new CMSMSFilter(smsFilter);
-		filter.setMobiles(smsFilter.getMobiles());
-		filter.setContent(smsFilter.getContent());
 
 		System.out.println("sssssss" +smsFilter.getServiceType().getProvider().getServiceURL());
 		String resStr = HttpUtil.sendPost(smsFilter.getServiceType().getProvider().getServiceURL(), filter.encode());
@@ -48,11 +46,11 @@ public class CMSMService {
 				filter.setMobiles(e);
 				filter.setContent( msgs.get(e));
 				his.transCM(filter, sendRes.getRspcod(), smsFilter);
-				DBConnectionUtil.addSmsRecord(his);//多对多mm标记
+				DBConnectionUtil.addSmsRecordPool(his);//多对多mm标记
 			}
 		} else {
 			his.transCM(filter, sendRes.getRspcod(), smsFilter);
-			DBConnectionUtil.addSmsRecord(his);
+			DBConnectionUtil.addSmsRecordPool(his);
 		}
 		return sendRes.getRspcod();
 	}

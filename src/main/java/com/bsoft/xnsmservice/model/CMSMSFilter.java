@@ -24,8 +24,6 @@ public class CMSMSFilter {
 	private String mac;//	String;	参数校验序列，生成方法：将ecName、apId、secretKey、mobiles、content、sign、addSerial按序拼接（无间隔符），通过MD5（32位小写）计算得出值。
 
 	public CMSMSFilter(SMSFilterDTO smsFilter){//默认配置
-		SmsInfoConfig.ConfigSmsInfo(smsFilter.getServiceType());
-
 		this.content = smsFilter.getContent();
 		this.mobiles = smsFilter.getMobiles();
 
