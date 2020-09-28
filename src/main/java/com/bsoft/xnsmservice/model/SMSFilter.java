@@ -2,10 +2,7 @@ package com.bsoft.xnsmservice.model;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Map;
 
 /**
  * @ClassName SMSFilter
@@ -36,26 +33,26 @@ public class SMSFilter implements Filter{
 			throws IOException, ServletException {
 		// TODO Auto-generated method stub
 		System.out.println("过滤...");
-
-		HttpServletRequest req = (HttpServletRequest)request;
-		HttpServletResponse resp = (HttpServletResponse)response;
-
-		Map<String, String[]> username = req.getParameterMap();
-
-		try {
-			if (username.containsKey("sType") || username.containsKey("content")) {
-				String v = req.getParameterValues("sType")[0];
-				System.out.println(v);
-				if (v.equals("100") || v.equals("101")){
-
-				} else {
-
-				}
-
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+//
+//		HttpServletRequest req = (HttpServletRequest)request;
+//		HttpServletResponse resp = (HttpServletResponse)response;
+//
+//		Map<String, String[]> username = req.getParameterMap();
+//
+//		try {
+//			if (username.containsKey("sType") || username.containsKey("content")) {
+//				String v = req.getParameterValues("sType")[0];
+//				System.out.println(v);
+//				if (v.equals("100") || v.equals("101")){
+//
+//				} else {
+//
+//				}
+//
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
 
 		chain.doFilter(request, response);
 

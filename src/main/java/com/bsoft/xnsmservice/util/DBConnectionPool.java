@@ -92,8 +92,7 @@ public class DBConnectionPool {
 			try {
 				connections.addElement(new PooledConnection(newConnection()));
 			} catch (SQLException e) {
-				System.out.println(" 创建数据库连接失败！ " + e.getMessage());
-				throw new SQLException();
+				throw e;
 			}
 			// System.out.println(" 数据库连接己创建 ......");
 		}
@@ -115,8 +114,7 @@ public class DBConnectionPool {
 			// 数据库返回的 driverMaxConnections 若为 0 ，表示此数据库没有最大连接限制，或数据库的最大连接限制不知道
 			// driverMaxConnections 为返回的一个整数，表示此数据库允许客户连接的数目
 			// 如果连接池中设置的最大连接数量大于数据库允许的连接数目 , 则置连接池的最大连接数目为数据库允许的最大数目
-			if (driverMaxConnections > 0
-					&& this.maxConnections > driverMaxConnections) {
+			if (driverMaxConnections > 0 && this.maxConnections > driverMaxConnections) {
 				this.maxConnections = driverMaxConnections;
 			}
 		}
@@ -127,7 +125,7 @@ public class DBConnectionPool {
 	 *
 	 * @return 返回一个可用的数据库连接对象
 	 */
-	public synchronized Connection getConnection() throws SQLException {
+	public synchronized Connection getConnection() throws SQLException, InterruptedException {
 		// 确保连接池己被创建
 		if (connections == null) {
 			return null; // 连接池还没创建，则返回 null
@@ -250,7 +248,7 @@ public class DBConnectionPool {
 	/**
 	 * 刷新连接池中所有的连接对象
 	 */
-	public synchronized void refreshConnections() throws SQLException {
+	public synchronized void refreshConnections() throws SQLException, InterruptedException {
 		// 确保连接池己创新存在
 		if (connections == null) {//连接池不存在，无法刷新
 			System.out.println(" 连接池不存在，无法刷新 !");
@@ -274,7 +272,7 @@ public class DBConnectionPool {
 	/**
 	 * 关闭连接池中所有的连接，并清空连接池。
 	 */
-	public synchronized void closeConnectionPool() throws SQLException {
+	public synchronized void closeConnectionPool() throws InterruptedException {
 		// 确保连接池存在，如果不存在，返回
 		if (connections == null) {
 			System.out.println(" 连接池不存在，无法关闭 !");
@@ -313,10 +311,11 @@ public class DBConnectionPool {
 	 *
 	 * @param mSeconds 给定的毫秒数
 	 */
-	private void wait(int mSeconds) {
+	private void wait(int mSeconds) throws InterruptedException {
 		try {
 			Thread.sleep(mSeconds);
 		} catch (InterruptedException e) {
+			throw e;
 		}
 	}
 	/**

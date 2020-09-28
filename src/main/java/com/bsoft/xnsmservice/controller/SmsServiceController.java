@@ -13,12 +13,13 @@ import com.bsoft.xnsmservice.util.DBConnectionUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.validation.Valid;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -40,9 +41,22 @@ public class SmsServiceController {
 	@ApiOperation(value = "sendSms", notes = "发送普通短信", response = CMSMSResult.class)
 	@PostMapping("/sendSms")
 	@ResponseBody
-	public String sendSms(@Validated @RequestBody SMSFilterDTO smsFilter){
+	public String sendSms(@Valid SMSFilterDTO smsFilter, BindingResult bindingResult){
 		ResultDTO resultDTO = new ResultDTO();
 
+		//在这里，我们判断参数是否通过校验
+		if (bindingResult.hasErrors()) {
+			FieldError error = (FieldError) bindingResult.getAllErrors().get(0);
+			resultDTO.returnError("400", error.getDefaultMessage());
+
+			return resultDTO.returntoString();
+
+
+//			Map<String,String> errorMsg = new HashMap<>();
+//			for (FieldError item:bindingResult.getFieldErrors()) {
+//				errorMsg.put(item.getField(),item.getDefaultMessage().toString());
+//			}
+		}
 		try {
 			SMServiceType type = smsFilter.getServiceType();
 			SmsInfoConfig.ConfigSmsInfo(type);//配置平台信息
@@ -58,14 +72,15 @@ public class SmsServiceController {
 					break;
 
 				default: {
-					resultDTO.setCode("400");
-					resultDTO.setMessage(smsFilter.getsType() + "服务未建立: "+ type.getCode());
+					resultDTO.returnError("400","服务未建立: "+ type.getCode());
 				}break;
 
 			}
+		} catch (NullPointerException e){
+			resultDTO.returnError("401","请检查数据");
+
 		} catch (Exception e){
-			resultDTO.setCode("500");
-			resultDTO.setMessage(e.getMessage());
+			resultDTO.returnError("500","服务器异常");
 		}
 
 		return resultDTO.returntoString();
@@ -77,22 +92,20 @@ public class SmsServiceController {
 	private void sendCMSms(SMSFilterDTO smsFilter, ResultDTO resultDTO) throws SQLException,Exception{
 		CMSMSFilter CMSMSFilter = new CMSMSFilter(smsFilter);
 		//发送短信
-			String result = CMSMService.sendNormalMsg(smsFilter);
+		String result = CMSMService.sendNormalMsg(smsFilter);
 
-			if (result.equals("success")){
-				resultDTO.setMessage("发送成功");
-			} else {
-				resultDTO.setCode("501");
-				resultDTO.setMessage("返回码:"+result);
-			}
+		if (result.equals("success")){
+			resultDTO.setMessage("发送成功");
+		} else {
+			resultDTO.returnError("501","信息校验不通过:"+result);
+		}
 	}
 
 	/**
 	 * 发送电信信息
 	 */
 	private void sendCTSms(SMSFilterDTO smsFilter, ResultDTO resultDTO) {
-		resultDTO.setCode("400");
-		resultDTO.setMessage("服务未建立!");
+		resultDTO.returnError("501","服务未建立!");
 	}
 
 	/**
@@ -175,10 +188,10 @@ public class SmsServiceController {
 //				conn.close();// 关闭连接
 //			}
 //			System.out.println("经过100次的循环调用，不使用连接池花费的时间:" + (System.currentTimeMillis() - start) + "ms");
-		} catch (SQLException e) {
+		} catch (SQLException | InterruptedException e) {
 			e.printStackTrace();
-//		} catch (ClassNotFoundException e) {
-//			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return resultDTO.returntoString();
 	}

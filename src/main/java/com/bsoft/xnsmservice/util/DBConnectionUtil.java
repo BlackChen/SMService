@@ -22,7 +22,7 @@ public class DBConnectionUtil {
 	private DBConnectionUtil() {//私有静态方法
 	}
 
-	public static DBConnectionPool GetPoolInstance() {
+	public static DBConnectionPool GetPoolInstance() throws Exception {
 		if(poolInstance == null) {
 			poolInstance = new DBConnectionPool( DBInfoConfig.getDriver(), DBInfoConfig.getUrl(),//+"?useUnicode=true&characterEncoding=utf-8",
 					 DBInfoConfig.getUsername(), DBInfoConfig.getPassword()
@@ -30,8 +30,8 @@ public class DBConnectionUtil {
 
 			try {
 				poolInstance.createPool();
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
+			} catch (Exception e) { // TODO Auto-generated catch block
+//				throw e;
 				e.printStackTrace();
 			}
 		}
@@ -102,29 +102,25 @@ public class DBConnectionUtil {
 	 * 增加发送记录 通过连接池
 	 * @param his
 	 */
-	public static void addSmsRecordPool(SmsSendHistory rec) throws ClassNotFoundException,SocketException,SQLException{
-		try {
-			DBConnectionPool connPool = DBConnectionUtil.GetPoolInstance();//单例模式创建连接池对象
-			// SQL语句
-			String sql = "insert into " +DBInfoConfig.getTablename()+
-					"(ecName,apId,mobiles,content,params,templateId,sign,addSerial,rspcod,ipv4,macId,sendTime,serid) " +
-					"values(" +
-					rec.toSQLString() +
-					")";
+	public static void addSmsRecordPool(SmsSendHistory rec) throws Exception {
+		DBConnectionPool connPool = DBConnectionUtil.GetPoolInstance();//单例模式创建连接池对象
+		// SQL语句
+		String sql = "insert into " +DBInfoConfig.getTablename()+
+				"(ecName,apId,mobiles,content,params,templateId,sign,addSerial,rspcod,ipv4,macId,sendTime,serid) " +
+				"values(" +
+				rec.toSQLString() +
+				")";
 
-			Connection conn = connPool.getConnection(); // 从连接库中获取一个可用的连接
-			Statement stmt = conn.createStatement();
+		Connection conn = connPool.getConnection(); // 从连接库中获取一个可用的连接
+		Statement stmt = conn.createStatement();
 
-			stmt.executeUpdate(sql);
+		stmt.executeUpdate(sql);
 
-			stmt.close();
-			connPool.returnConnection(conn);// 连接使用完后释放连接到连接池
+		stmt.close();
+		connPool.returnConnection(conn);// 连接使用完后释放连接到连接池
 
-			// connPool.refreshConnections();//刷新数据库连接池中所有连接，即不管连接是否正在运行，都把所有连接都释放并放回到连接池。注意：这个耗时比较大。
-			connPool.closeConnectionPool();// 关闭数据库连接池。注意：这个耗时比较大。
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		// connPool.refreshConnections();//刷新数据库连接池中所有连接，即不管连接是否正在运行，都把所有连接都释放并放回到连接池。注意：这个耗时比较大。
+		connPool.closeConnectionPool();// 关闭数据库连接池。注意：这个耗时比较大。
 	}
 
 	/**

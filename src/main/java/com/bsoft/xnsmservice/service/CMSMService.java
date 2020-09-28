@@ -9,8 +9,6 @@ import com.bsoft.xnsmservice.model.SMSFilterDTO;
 import com.bsoft.xnsmservice.util.DBConnectionUtil;
 import com.bsoft.xnsmservice.util.HttpUtil;
 
-import java.net.SocketException;
-import java.sql.SQLException;
 import java.util.Map;
 
 /**
@@ -26,7 +24,7 @@ public class CMSMService {
 	 * @param smsFilter
 	 * @return
 	 */
-	public static String sendNormalMsg(SMSFilterDTO smsFilter) throws SQLException, SocketException, ClassNotFoundException {
+	public static String sendNormalMsg(SMSFilterDTO smsFilter) throws Exception {
 		CMSMSFilter filter = new CMSMSFilter(smsFilter);
 
 		System.out.println("sssssss" +smsFilter.getServiceType().getProvider().getServiceURL());

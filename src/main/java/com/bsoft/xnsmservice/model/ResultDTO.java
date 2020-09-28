@@ -2,10 +2,6 @@ package com.bsoft.xnsmservice.model;
 
 import com.alibaba.fastjson.JSON;
 
-/**
- * 
- * author:caoyuxiang 2020年8月6日 下午1:55:34
- */
 public class ResultDTO {
 	private String code;
 	private String message;
@@ -13,12 +9,11 @@ public class ResultDTO {
 
 	/**
 	 * 返回失败数组样式字符串
+	 * @return
 	 */
-	public String returnErrorSring (String code, String errMsg){
+	public void returnError (String code, String errMsg){
 		this.setCode(code);
 		this.setMessage(errMsg);
-
-		return returntoString();
 	}
 	/**
 	 * 返回成功字符串
@@ -32,6 +27,7 @@ public class ResultDTO {
 	 */
 	public ResultDTO(){
 		code = "200";
+		message = "";
 	}
 	public String getCode() {
 		return code;
@@ -57,7 +53,31 @@ public class ResultDTO {
 		this.data = data;
 	}
 
+	public void setContent(ResultCode code){
+		switch (code){
+			case NoError:
 
+				break;
+
+			case SQLError:
+				break;
+
+			default:
+				break;
+		}
+	}
+
+	enum ResultCode {
+		NoError,//正常
+		ParamError,//入参错误
+		Exception,//异常错误
+		SQLError,//数据库错误
+		ServerError;//其他错误
+
+		private String code;
+		private String rsCode;
+
+	}
 	/**
 	 * 100 => 'Continue', //继续
 	 * 101 => 'Switching Protocols', //分组交换协议

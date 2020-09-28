@@ -2,8 +2,9 @@ package com.bsoft.xnsmservice.model;
 
 import com.bsoft.xnsmservice.config.SMServiceType;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 /**
  * @ClassName SMSFilterDTO
@@ -18,14 +19,15 @@ public class SMSFilterDTO {
 	/**
 	 * 内容或者电话和内容
 	 */
-	@NotEmpty(message = "发送内容不能为空")
+	@NotBlank(message = "发送内容不能为空1")
 	private String content;
 	private String ipv4;
 	/**
 	 * 服务类型代码
 	 */
-	@Size(max = 1000, min = 0, message = "类型不存在")
-	private int sType;//传入的发送类型
+	@NotNull(message = "类型不能为空!")
+	@Max(value = 200, message = "请确认服务类型!")
+	private Integer sType;//传入的发送类型
 	/**
 	 * 通过sType获得的短信服务类型
 	 */
@@ -63,11 +65,11 @@ public class SMSFilterDTO {
 		this.ipv4 = ipv4;
 	}
 
-	public int getsType() {
+	public Integer getsType() {
 		return sType;
 	}
 
-	public void setsType(int sType) {
+	public void setsType(Integer sType) {
 		this.sType = sType;
 
 		setServiceType(SMServiceType.getSMSType(sType));
