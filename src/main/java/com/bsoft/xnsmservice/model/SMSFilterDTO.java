@@ -19,14 +19,14 @@ public class SMSFilterDTO {
 	/**
 	 * 内容或者电话和内容
 	 */
-	@NotBlank(message = "发送内容不能为空1")
+	@NotBlank(message = "请检查发送内容.")
 	private String content;
 	private String ipv4;
 	/**
 	 * 服务类型代码
 	 */
+	@Max(value = 1000, message = "请确认服务类型!")
 	@NotNull(message = "类型不能为空!")
-	@Max(value = 200, message = "请确认服务类型!")
 	private Integer sType;//传入的发送类型
 	/**
 	 * 通过sType获得的短信服务类型
