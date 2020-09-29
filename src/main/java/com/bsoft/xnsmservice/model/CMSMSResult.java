@@ -1,7 +1,7 @@
 package com.bsoft.xnsmservice.model;
 
 /**
- * Description: nethospital-parent
+ * Description: 中国移动短信出参
  * Created by blackchen on 2020/8/26 09:32
  */
 public class CMSMSResult extends SMSFilterDTO {

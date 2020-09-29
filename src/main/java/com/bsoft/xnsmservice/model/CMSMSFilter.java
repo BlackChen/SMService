@@ -7,7 +7,7 @@ import com.bsoft.xnsmservice.util.MD5Util;
 import org.springframework.util.Base64Utils;
 
 /**
- * Description: nethospital-parent
+ * Description: 中国移动短信入参
  * Created by blackchen on 2020/8/26 09:30
  */
 public class CMSMSFilter {
@@ -38,7 +38,7 @@ public class CMSMSFilter {
 	public String encode() {
 		String reqText = JSON.toJSONString(this);
 //		System.out.println("json:"+reqText);
-
+//TOConfig 编码问题注意
 		String encode = new String(Base64Utils.encode(reqText.getBytes())); // Base64.encodeBase64String(reqText.getBytes());
 //		System.out.println("base64:"+encode);
 
