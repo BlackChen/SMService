@@ -1,12 +1,12 @@
 package com.bsoft.xnsmservice.entity;
 
-import com.bsoft.xnsmservice.config.SMServiceType;
 import com.bsoft.xnsmservice.config.SmsInfoConfig;
 import com.bsoft.xnsmservice.model.CMSMSFilter;
 import com.bsoft.xnsmservice.model.SMSFilterDTO;
 import com.bsoft.xnsmservice.util.DateTools;
 import com.bsoft.xnsmservice.util.NetworkUtil;
 
+import javax.persistence.*;
 import java.io.Serializable;
 import java.net.SocketException;
 
@@ -16,6 +16,8 @@ import java.net.SocketException;
  * @author blackchen
  * @since 2020-09-25 11:01:56
  */
+@Entity
+@Table(name = "sms_send_history")
 public class SmsSendHistory implements Serializable {
 	private static final long serialVersionUID = 786751066642524623L;
 	/**
@@ -76,13 +78,15 @@ public class SmsSendHistory implements Serializable {
 	/**
 	 * id
 	 */
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer sId ;
 	/**
 	 * 服务代码
 	 */
 	private String serid = SmsInfoConfig.getServiceID();
 
-	private SMServiceType serviceType;
+//	private SMServiceType serviceType;
 
 	public SmsSendHistory() throws SocketException {
 	}
@@ -119,7 +123,7 @@ public class SmsSendHistory implements Serializable {
 		this.rspcod = rspcod;
 
 		this.ipv4 = dto.getIpv4();
-		this.serviceType = dto.getServiceType();
+//		this.serviceType = dto.getServiceType();
 	}
 
 	public static long getSerialVersionUID() {
@@ -134,13 +138,13 @@ public class SmsSendHistory implements Serializable {
 		this.sId = sId;
 	}
 
-	public SMServiceType getServiceType() {
-		return serviceType;
-	}
-
-	public void setServiceType(SMServiceType serviceType) {
-		this.serviceType = serviceType;
-	}
+//	public SMServiceType getServiceType() {
+//		return serviceType;
+//	}
+//
+//	public void setServiceType(SMServiceType serviceType) {
+//		this.serviceType = serviceType;
+//	}
 
 	public String getEcname() {
 		return ecname;

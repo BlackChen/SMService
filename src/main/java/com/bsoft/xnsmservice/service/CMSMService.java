@@ -2,13 +2,16 @@ package com.bsoft.xnsmservice.service;
 
 import com.alibaba.fastjson.JSON;
 import com.bsoft.xnsmservice.config.SMServiceType;
+import com.bsoft.xnsmservice.dao.SMSDao;
 import com.bsoft.xnsmservice.entity.SmsSendHistory;
 import com.bsoft.xnsmservice.model.CMSMSFilter;
 import com.bsoft.xnsmservice.model.CMSMSResult;
 import com.bsoft.xnsmservice.model.SMSFilterDTO;
-import com.bsoft.xnsmservice.util.DBConnectionUtil;
 import com.bsoft.xnsmservice.util.HttpUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Map;
 
 /**
@@ -16,21 +19,24 @@ import java.util.Map;
  * @Description 中国移动短信
  * Created by blackchen on 2020/9/24 09:50
  */
+@Service
 public class CMSMService {
-
+	  @Autowired
+	  private SMSDao smsDao;
 	/**
 	 * 发送普通短信 一对一 一对多 多对多
 	 *
 	 * @param smsFilter
 	 * @return
 	 */
-	public static String sendNormalMsg(SMSFilterDTO smsFilter) throws Exception {
+	@Transactional
+	public String sendNormalMsg(SMSFilterDTO smsFilter) throws Exception {
 		CMSMSFilter filter = new CMSMSFilter(smsFilter);
 
-		System.out.println("sssssss" +smsFilter.getServiceType().getProvider().getServiceURL());
+//		System.out.println("sssssss" +smsFilter.getServiceType().getProvider().getServiceURL());
 		String resStr = HttpUtil.sendPost(smsFilter.getServiceType().getProvider().getServiceURL(), filter.encode());
 
-		System.out.print("发送短信结果："+resStr);
+//		System.out.print("发送短信结果："+resStr);
 
 		CMSMSResult sendRes = JSON.parseObject(resStr, CMSMSResult.class);
 
@@ -44,11 +50,14 @@ public class CMSMService {
 				filter.setMobiles(e);
 				filter.setContent( msgs.get(e));
 				his.transCM(filter, sendRes.getRspcod(), smsFilter);
-				DBConnectionUtil.addSmsRecordPool(his);//多对多mm标记
+
+				smsDao.save(his);
+
 			}
 		} else {
 			his.transCM(filter, sendRes.getRspcod(), smsFilter);
-			DBConnectionUtil.addSmsRecordPool(his);
+
+			smsDao.save(his);
 		}
 		return sendRes.getRspcod();
 	}

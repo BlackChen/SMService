@@ -22,8 +22,8 @@ public class SmsInfoConfig {
 		switch (type){
 			case CMCC_TZPH_Normal:{
 				ecName = "天柱县人民医院";
-				apId = "tzph";
-				secretKey = "tzph123456";
+				apId = "tttest";
+				secretKey = "test123456";
 				sign = "kGrOgmchu";
 				addSerial = "";
 				serviceID = "1069090727550027";

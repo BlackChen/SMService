@@ -26,7 +26,7 @@ public class NetworkUtil {
 			//字节转换为整数
 			int temp = mac[i]&0xff;
 			String str = Integer.toHexString(temp);
-			System.out.println("每8位:"+str);
+//			System.out.println("每8位:"+str);
 			if(str.length()==1) {
 				sb.append("0"+str);
 			}else {

@@ -2,6 +2,8 @@ package com.bsoft.xnsmservice.model;
 
 import com.alibaba.fastjson.JSON;
 
+
+
 public class ResultDTO {
 	private String code;
 	private String message;
@@ -26,7 +28,7 @@ public class ResultDTO {
 	 * 设置默认值 
 	 */
 	public ResultDTO(){
-		code = "200";
+		code = "1";
 		message = "";
 	}
 	public String getCode() {

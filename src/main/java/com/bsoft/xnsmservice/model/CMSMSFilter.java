@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.bsoft.xnsmservice.config.SMSendType;
 import com.bsoft.xnsmservice.config.SmsInfoConfig;
 import com.bsoft.xnsmservice.util.MD5Util;
-import org.apache.tomcat.util.codec.binary.Base64;
+import org.springframework.util.Base64Utils;
 
 /**
  * Description: nethospital-parent
@@ -37,10 +37,10 @@ public class CMSMSFilter {
 	}
 	public String encode() {
 		String reqText = JSON.toJSONString(this);
-		System.out.println("json:"+reqText);
+//		System.out.println("json:"+reqText);
 
-		String encode = Base64.encodeBase64String(reqText.getBytes());
-		System.out.println("base64:"+encode);
+		String encode = new String(Base64Utils.encode(reqText.getBytes())); // Base64.encodeBase64String(reqText.getBytes());
+//		System.out.println("base64:"+encode);
 
 		return encode;
 	}
@@ -65,10 +65,10 @@ public class CMSMSFilter {
 
 		stringBuffer.append(this.getSign());
 		stringBuffer.append(this.getAddSerial());
-		System.out.println("拼接字符串:"+ stringBuffer);
+//		System.out.println("拼接字符串:"+ stringBuffer);
 
 		this.setMac(MD5Util.MD5(stringBuffer.toString()));
-		System.out.println("mac:"+this.getMac());
+//		System.out.println("mac:"+this.getMac());
 	}
 
 	public String getTemplateId() {
