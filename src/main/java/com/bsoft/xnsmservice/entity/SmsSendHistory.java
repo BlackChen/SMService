@@ -3,6 +3,7 @@ package com.bsoft.xnsmservice.entity;
 import com.bsoft.xnsmservice.config.SmsInfoConfig;
 import com.bsoft.xnsmservice.model.CMSMSFilter;
 import com.bsoft.xnsmservice.model.SMSFilterDTO;
+import com.bsoft.xnsmservice.util.DateTools;
 import com.bsoft.xnsmservice.util.NetworkUtil;
 
 import javax.persistence.*;
@@ -69,11 +70,11 @@ public class SmsSendHistory implements Serializable {
 	/**
 	 * MAC地址
 	 */
-	private String macid;
+	private String macid = NetworkUtil.getLocalMac();
 	/**
 	 * 发送时间
 	 */
-	private String sendtime;
+	private String sendtime = DateTools.getSysdateYYYY_MM_DDHHMMSS();
 	/**
 	 * id
 	 */
@@ -102,6 +103,8 @@ public class SmsSendHistory implements Serializable {
 
 		String ip = dto.getIpv4();
 		this.ipv4 = ip;
+
+		this.sendtime = getSendtime();
 	}
 
 	public static long getSerialVersionUID() {
