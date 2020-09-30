@@ -1,6 +1,7 @@
 package com.bsoft.xnsmservice.model;
 
 import com.bsoft.xnsmservice.config.SMServiceType;
+import com.bsoft.xnsmservice.util.NetworkUtil;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -69,7 +70,7 @@ public class SMSFilterDTO {
 	}
 
 	public String getIpv4() {
-		return ipv4;
+		return ipv4.isEmpty() || ipv4.equals("") ? NetworkUtil.getV4IP() : ipv4;
 	}
 
 	public void setIpv4(String ipv4) {
